@@ -1,0 +1,2 @@
+Nev		Szak		Neptunkod	Szuletesi datum
+Szûcs Attila	Mernok Informatika	DJA75O	1999.03.17	
