@@ -1,37 +1,50 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<sys/types.h>
+#include<string.h>
+#include<sys/wait.h>
+  
 int main()
 {
-    int fd[2];
-    int szam;
-    char buf;
-
-    if(pipe(fd) < 0)
+    int fd2[2];
+  
+    pid_t p;
+  
+    if (pipe(fd2)==-1)
     {
-        perror("pipe");
-        exit(EXIT_SUCCESS);
+        fprintf(stderr, "Pipe hiba" );
+        return 1;
     }
-
-    if(fork() == 0)
+  
+    p = fork();
+  
+    if (p < 0)
     {
-        write(fd[0], "Szucs Attila DJA75O", 17);
-
-        close(fd[0]);
-
-        exit(EXIT_SUCCESS);
+        fprintf(stderr, "fork hiba" );
+        return 1;
     }
-
-    while(read(fd[1], &buf, 1) > 0 )
+    else if (p > 0)
     {
-        printf("%c", buf);
+        //szülő procesz
+        char str[19];
+  
+        close(fd2[1]);
+
+        read(fd2[0], str, 19);
+        printf("%s\n", str);
+        close(fd2[0]);
     }
+    else
+    {
+        //gyerek procesz
+        char str[] = "Szűcs_Attila_DJA75O";
 
-    close(fd[1]);
-
-    printf("\n");
-
-    exit(EXIT_SUCCESS);
+        close(fd2[0]);
+  
+        write(fd2[1], str, strlen(str)+1);
+        close(fd2[1]);
+  
+        exit(0);
+    }
 }
